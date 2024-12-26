@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shelf_stream/models/appbars_model.dart';
-// import 'package:shelf_stream/models/categories.dart';
 import 'package:shelf_stream/screens/browse_shelves_screen.dart';
 import 'package:shelf_stream/screens/home_screen.dart';
 import 'package:shelf_stream/screens/notifications_screen.dart';
