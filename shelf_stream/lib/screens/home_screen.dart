@@ -180,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     const SizedBox(height: 8),
-                                    Text(currentBook.details),
+                                    Text(currentBook.details!),
                                   ],
                                 ),
                               ),

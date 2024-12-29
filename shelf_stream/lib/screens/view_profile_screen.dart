@@ -55,15 +55,15 @@ class ViewProfileScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8.0,
-                      children: (shelf['genres'] ?? [])
-                          .map<Widget>((genre) => Chip(
-                                label: Text(genre),
-                                backgroundColor: Colors.white.withOpacity(0.8),
-                              ))
-                          .toList(),
-                    ),
+                    // Wrap(
+                    //   spacing: 8.0,
+                    //   children: (shelf['genres'] ?? [])
+                    //       .map<Widget>((genre) => Chip(
+                    //             label: Text(genre),
+                    //             backgroundColor: Colors.white.withOpacity(0.8),
+                    //           ))
+                    //       .toList(),
+                    // ),
                   ],
                 ),
               ),

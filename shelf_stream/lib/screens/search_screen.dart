@@ -86,8 +86,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 title: Text(searches.title),
                 trailing: Icon(
-                  Icons.arrow_forward,
-                  size: 15,
+                  Icons.chevron_right,
+                  size: 20,
                 ),
               ),
             ),

@@ -23,7 +23,7 @@ class ViewShelfScreen extends StatelessWidget {
               ),
               Container(
                 height: 200,
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black54,
               ),
               Positioned.fill(
                 child: Center(

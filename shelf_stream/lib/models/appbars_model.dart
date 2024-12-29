@@ -6,14 +6,22 @@ PreferredSizeWidget appBars({
   VoidCallbackAction? onTapSearch,
   bool withNotif = false,
   VoidCallback? onTapNotif,
+  bool isProfile = false,
+  VoidCallback? onTapMenu,
 }) {
   return AppBar(
+    leading: withSearch
+        ? Icon(
+            Icons.search,
+            size: 30,
+          )
+        : null,
     title: withSearch
         ? Container(
             height: 40,
             child: TextField(
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search),
+                // prefixIcon: Icon(Icons.search),
                 hintText: 'Search',
                 hintStyle: TextStyle(fontSize: 13),
                 border: OutlineInputBorder(
@@ -34,6 +42,11 @@ PreferredSizeWidget appBars({
         IconButton(
           onPressed: onTapNotif,
           icon: Icon(Icons.notifications),
+        ),
+      if (isProfile)
+        IconButton(
+          onPressed: (onTapMenu),
+          icon: Icon(Icons.menu),
         ),
     ],
   );
