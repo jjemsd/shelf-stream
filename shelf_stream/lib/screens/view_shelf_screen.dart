@@ -84,7 +84,7 @@ class ViewShelfScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => BookDetailsScreenFromShelf(
-                            clickedSearchResult: book, // Passing book data
+                            shelf: book, // Passing book data
                           ),
                         ),
                       );

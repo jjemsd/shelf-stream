@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelf_stream/data/data.dart';
 
 class BookListScreen extends StatefulWidget {
   const BookListScreen({super.key, required this.category});
@@ -11,32 +12,19 @@ class BookListScreen extends StatefulWidget {
 class _BookListScreenState extends State<BookListScreen> {
   @override
   Widget build(BuildContext context) {
-    // Example book data
-    List<Map<String, String>> books = [
-      {
-        'title': 'Sample Book 1',
-        'owner': 'John Doe',
-        'image':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png',
-        'details': 'This is a detailed description of Sample Book 1.',
-      },
-      {
-        'title': 'Sample Book 2',
-        'owner': 'Jane Smith',
-        'image':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png',
-        'details': 'This is a detailed description of Sample Book 2.',
-      },
-    ];
+    List<Map<String, String>> books = bookList;
+
+    List<Map<String, String>> filteredBooks =
+        books.where((book) => book['genre'] == widget.category).toList();
 
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.category),
       ),
       body: ListView.builder(
-        itemCount: books.length,
+        itemCount: filteredBooks.length,
         itemBuilder: (context, index) {
-          var book = books[index];
+          var book = filteredBooks[index];
           return GestureDetector(
             onTap: () {
               showDialog(

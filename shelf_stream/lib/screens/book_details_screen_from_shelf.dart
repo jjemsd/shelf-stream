@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 
-class BookDetailsScreenFromShelf extends StatelessWidget {
-  final Map<String, dynamic> clickedSearchResult;
+class BookDetailsScreenFromShelf extends StatefulWidget {
+  final Map<String, dynamic> shelf;
 
   const BookDetailsScreenFromShelf({
     super.key,
-    required this.clickedSearchResult,
+    required this.shelf,
   });
 
   @override
+  State<BookDetailsScreenFromShelf> createState() =>
+      _BookDetailsScreenFromShelfState();
+}
+
+class _BookDetailsScreenFromShelfState
+    extends State<BookDetailsScreenFromShelf> {
+  @override
   Widget build(BuildContext context) {
-    final bookDetails = clickedSearchResult;
+    final bookDetails = widget.shelf;
 
     return Scaffold(
       appBar: AppBar(

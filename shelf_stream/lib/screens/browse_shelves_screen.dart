@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelf_stream/data/data.dart';
 import 'package:shelf_stream/screens/view_shelf_screen.dart';
 
 class BrowseShelves extends StatefulWidget {
@@ -9,142 +10,122 @@ class BrowseShelves extends StatefulWidget {
 }
 
 class _BrowseShelvesState extends State<BrowseShelves> {
-  final List<Map<String, dynamic>> shelves = [
-    {
-      'profilePicture':
-          'https://placekitten.com/150/150', // Alternate placeholder
-      'shelfName': 'Fiction Paradise',
-      'ownerUsername': 'booklover123',
-      'shelfCover': 'https://picsum.photos/600/300', // Alternate placeholder
-      'books': [
-        {
-          'title': 'Book A',
-          'cover':
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png'
-        },
-        {
-          'title': 'Book B',
-          'cover':
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png'
-        },
-      ],
-    },
-    {
-      'profilePicture': 'https://placekitten.com/150/150',
-      'shelfName': 'Mystery Mania',
-      'ownerUsername': 'mysteryFan',
-      'shelfCover': 'https://picsum.photos/600/300',
-      'books': [
-        {
-          'title': 'Mystery A',
-          'cover':
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png'
-        },
-        {
-          'title': 'Mystery B',
-          'cover':
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png'
-        },
-      ],
-    },
-    {
-      'profilePicture': 'https://placekitten.com/150/150',
-      'shelfName': 'Sci-Fi Wonders',
-      'ownerUsername': 'scifiGeek',
-      'shelfCover': 'https://picsum.photos/600/300',
-      'books': [
-        {
-          'title': 'Sci-Fi A',
-          'cover':
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png'
-        },
-        {
-          'title': 'Sci-Fi B',
-          'cover':
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png'
-        },
-      ],
-    },
-  ];
+  TextEditingController searchController = TextEditingController();
+  List<Map<String, dynamic>> filteredShelves = [];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredShelves = shelves; // Initialize with all shelves
+  }
+
+  void _searchShelves(String query) {
+    final results = shelves.where((shelf) {
+      final shelfName = shelf['shelfName']?.toLowerCase() ?? '';
+      final ownerName = shelf['ownerUsername']?.toLowerCase() ?? '';
+      return shelfName.contains(query.toLowerCase()) ||
+          ownerName.contains(query.toLowerCase());
+    }).toList();
+
+    setState(() {
+      filteredShelves = results;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Browse Shelves'),
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(8.0),
-        itemCount: shelves.length,
-        itemBuilder: (context, index) {
-          final shelf = shelves[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 8.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: searchController,
+              onChanged: _searchShelves,
+              decoration: InputDecoration(
+                hintText: 'Search by shelf name or owner...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                suffixIcon: const Icon(Icons.search),
+              ),
             ),
-            clipBehavior: Clip.antiAlias,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Shelf Cover with Error Handling
-                Image.network(
-                  shelf['shelfCover']!,
-                  fit: BoxFit.cover,
-                  height: 150,
-                  width: double.infinity,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 150,
-                      width: double.infinity,
-                      color: Colors.grey.shade300,
-                      child: const Icon(
-                        Icons.error,
-                        size: 50,
-                        color: Colors.grey,
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(8.0),
+              itemCount: filteredShelves.length,
+              itemBuilder: (context, index) {
+                final shelf = filteredShelves[index];
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Shelf Cover with Error Handling
+                      Image.network(
+                        shelf['shelfCover'] ?? '',
+                        fit: BoxFit.cover,
+                        height: 150,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 150,
+                            width: double.infinity,
+                            color: Colors.grey.shade300,
+                            child: const Icon(
+                              Icons.error,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-                Container(
-                  height: 150,
-                  color: Colors.black.withOpacity(0.5),
-                ),
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(shelf['profilePicture']!),
-                    onBackgroundImageError: (_, __) {
-                      // Fallback to default asset if image fails
-                    },
-                  ),
-                  title: Text(
-                    shelf['shelfName']!,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'Owner: ${shelf['ownerUsername']}',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ViewShelfScreen(shelf: shelf),
+                      Container(
+                        height: 150,
+                        color: Colors.black54,
                       ),
-                    );
-                  },
-                ),
-              ],
+                      ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(shelf['profilePicture'] ?? ''),
+                          radius: 50,
+                        ),
+                        title: Text(
+                          shelf['shelfName'] ?? 'Unknown Shelf',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Owner: ${shelf['ownerUsername'] ?? 'Unknown'}',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ViewShelfScreen(shelf: shelf),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }

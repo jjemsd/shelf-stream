@@ -147,7 +147,7 @@ class DatabaseHelper {
     print('Book deleted with ID: $bookId');
   }
 
-    static Future<void> updateProfilePicture(
+  static Future<void> updateProfilePicture(
       int userId, String newProfilePictureUrl) async {
     var db = await openDb();
 
@@ -170,7 +170,4 @@ class DatabaseHelper {
       await db.close();
     }
   }
-
-
-
 }

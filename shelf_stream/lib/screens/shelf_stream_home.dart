@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shelf_stream/database/database_helper.dart';
-import 'package:shelf_stream/models/appbars_model.dart';
-import 'package:shelf_stream/models/drawer_widget.dart';
+import 'package:shelf_stream/componenents/appbars_model.dart';
+import 'package:shelf_stream/componenents/drawer_widget.dart';
 import 'package:shelf_stream/screens/browse_shelves_screen.dart';
 import 'package:shelf_stream/screens/home_screen.dart';
 import 'package:shelf_stream/screens/notifications_screen.dart';
@@ -10,34 +10,26 @@ import 'package:shelf_stream/screens/profile_screen.dart';
 import 'package:shelf_stream/screens/search_screen.dart';
 
 class ShelfStreamHome extends StatefulWidget {
-  const ShelfStreamHome({
-    super.key,
-  });
+  const ShelfStreamHome({super.key, required this.user});
+
+  final List<Map<String, dynamic>> user;
 
   @override
   State<ShelfStreamHome> createState() => _ShelfStreamHomeState();
 }
 
 class _ShelfStreamHomeState extends State<ShelfStreamHome> {
-  int selectedIndex = 0;
-
-  final List<Widget> screens = [
-    HomeScreen(),
-    SearchScreen(),
-    BrowseShelves(),
-    ProfileScreen(),
-  ];
-
-  void onItemTap(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
+    int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    DatabaseHelper.openDb();
-    DatabaseHelper.fetchUser();
+    final List<Widget> screens = [
+      HomeScreen(),
+      SearchScreen(),
+      BrowseShelves(),
+      ProfileScreen(user: widget.user),
+    ];
+
     final List<PreferredSizeWidget> appBarss = [
       appBars(
         title: 'Shelf-Stream',
@@ -50,17 +42,22 @@ class _ShelfStreamHomeState extends State<ShelfStreamHome> {
           );
         },
       ),
-      appBars(title: 'Search', withSearch: true),
+      appBars(title: 'Search', withSearch: false),
       appBars(title: 'Browse Virtual Shelves'),
       appBars(title: 'Profile'),
     ];
+
     return Scaffold(
       appBar: appBarss[selectedIndex],
-      drawer: DrawerWidget(),
+      drawer: DrawerWidget(
+        user:widget.user,
+      ),
       body: screens[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
-        onTap: onItemTap,
+        onTap: (index) => setState(() {
+          selectedIndex = index;
+        }),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey,
         items: const <BottomNavigationBarItem>[

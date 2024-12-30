@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shelf_stream/screens/log_in_screen.dart';
 import 'package:shelf_stream/screens/shelf_stream_home.dart';
 
 void main() {
@@ -18,8 +18,9 @@ class _ShelfStreamMainState extends State<ShelfStreamMain> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      
       debugShowCheckedModeBanner: false,
-      home: ShelfStreamHome(),
+      home: LoginScreen(),
     );
   }
 }

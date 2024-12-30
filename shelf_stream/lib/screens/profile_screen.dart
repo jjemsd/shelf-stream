@@ -1,73 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:path/path.dart';
 import 'package:shelf_stream/database/database_helper.dart';
 import 'package:shelf_stream/models/book_details.dart';
 import 'package:shelf_stream/models/user_model.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({super.key, required this.user});
+  final List<Map<String, dynamic>> user;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  var firstNameCtrl = TextEditingController();
-  var lastNameCtrl = TextEditingController();
-  var emailCtrl = TextEditingController();
-  var usernameCtrl = TextEditingController();
-  var bioCtrl = TextEditingController();
+  late final TextEditingController firstNameCtrl = TextEditingController();
+  late final TextEditingController lastNameCtrl = TextEditingController();
+  late final TextEditingController emailCtrl = TextEditingController();
+  late final TextEditingController usernameCtrl = TextEditingController();
+  late final TextEditingController bioCtrl = TextEditingController();
 
-  final titleController = TextEditingController();
-  final authorController = TextEditingController();
-  final detailsController = TextEditingController();
-  final imageUrlController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController authorController = TextEditingController();
+  final TextEditingController detailsController = TextEditingController();
+  final TextEditingController imageUrlController = TextEditingController();
 
-  var lastId = DatabaseHelper.getLastInsertedUser();
   String shelfName = 'Add a name for your shelf';
-
   String coverPhoto =
       'https://www.clcasfba.org/wp-content/uploads/2023/06/no-image-available.jpg';
-
-  String profilePicture =
-      'https://cdn.vectorstock.com/i/500p/95/56/user-profile-icon-avatar-or-person-vector-45089556.jpg';
-
   bool isLongPressed = false;
 
-  List<BookDetails> books = [];
+  // late Map<String, dynamic> currentUser;
 
-  void addBook(BookDetails newBook) {
-    setState(() {
-      books.add(newBook); // Add the book to the list
-    });
-  }
-
-  void showActionOverlay() {
-    setState(() {
-      isLongPressed = true;
-    });
-  }
-
-  List<Map<String, dynamic>> currentUser = [];
-
-  Future<void> fetchUserData() async {
-    await DatabaseHelper.openDb();
-    final user = await DatabaseHelper.getLastInsertedUser();
-
-    setState(() {
-      currentUser = user;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchUserData();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   currentUser = ; // Initialize current user
+  // }
 
   @override
   void dispose() {
+    firstNameCtrl.dispose();
+    lastNameCtrl.dispose();
+    emailCtrl.dispose();
+    usernameCtrl.dispose();
+    bioCtrl.dispose();
     titleController.dispose();
     authorController.dispose();
     detailsController.dispose();
@@ -102,9 +78,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: currentUser[0]['profilePicture'].isNotEmpty
-                        ? NetworkImage(currentUser[0]['profilePicture'])
-                        : NetworkImage(profilePicture),
+                    backgroundImage: widget.user[0]['profilePicture'] != null ||
+                            widget.user[0]['profilePicture'] != ''
+                        ? NetworkImage(widget.user[0]['profilePicture'])
+                        : const NetworkImage(
+                            'https://cdn.vectorstock.com/i/500p/95/56/user-profile-icon-avatar-or-person-vector-45089556.jpg',
+                          ),
                   ),
                 ),
               ),
@@ -195,16 +174,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 top: 70,
                 left: 130,
                 right: 16,
-                child: currentUser.isNotEmpty
+                child: widget.user.isNotEmpty
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            currentUser[0]['firstName'].isNotEmpty ||
-                                    (currentUser[0]['firstName'].isEmpty &&
-                                        currentUser[0]['lastName'].isNotEmpty)
-                                ? "${currentUser[0]['firstName']} ${currentUser[0]['lastName']}"
-                                : "User (${currentUser[0]["username"]})",
+                            widget.user[0]['firstName'].isNotEmpty ||
+                                    (widget.user[0]['firstName'].isEmpty &&
+                                        widget.user[0]['lastName'].isNotEmpty)
+                                ? "${widget.user[0]['firstName']} ${widget.user[0]['lastName']}"
+                                : "User (${widget.user[0]["username"]})",
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -213,8 +192,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            currentUser[0]['bio']?.isNotEmpty ?? false
-                                ? "${currentUser[0]['bio']}"
+                            widget.user[0]['bio']?.isNotEmpty ?? false
+                                ? "${widget.user[0]['bio']}"
                                 : '',
                             style: const TextStyle(
                               color: Colors.white70,
@@ -286,15 +265,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   BookDetails newBook = BookDetails(
                                     title: titleController.text,
                                     author: authorController.text,
-                                    ownerName: currentUser[0]['name'],
-                                    ownerId: currentUser[0]['id'],
+                                    ownerName: widget.user[0]['name'],
+                                    ownerId: widget.user[0]['id'],
                                     details: detailsController.text,
                                     imageUrl: imageUrlController.text.isNotEmpty
                                         ? imageUrlController.text
-                                        : null,
+                                        : '',
                                   );
 
-                                  // You can call a method to insert the book into the database here
                                   DatabaseHelper.insertBook(newBook);
                                   setState(() {
                                     titleController.clear();
@@ -343,12 +321,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     onPressed: () {
-                      if (currentUser.isNotEmpty) {
-                        firstNameCtrl.text = currentUser[0]['firstName'];
-                        lastNameCtrl.text = currentUser[0]['lastName'];
-                        emailCtrl.text = currentUser[0]['email'];
-                        usernameCtrl.text = currentUser[0]['username'];
-                        bioCtrl.text = currentUser[0]['bio'] ?? '';
+                      if (widget.user.isNotEmpty) {
+                        firstNameCtrl.text = widget.user[0]['firstName'] ?? '';
+                        lastNameCtrl.text = widget.user[0]['lastName'] ?? '';
+                        emailCtrl.text = widget.user[0]['email'] ?? '';
+                        usernameCtrl.text = widget.user[0]['username'] ?? '';
+                        bioCtrl.text = widget.user[0]['bio'] ?? '';
                         showDialog(
                           context: context,
                           builder: (BuildContext dialogContext) {
@@ -452,22 +430,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ElevatedButton.icon(
                                   onPressed: () async {
                                     var updatedUser = User(
-                                      id: currentUser[0]['id'],
+                                      id: widget.user[0]['id'],
                                       firstName: firstNameCtrl.text,
                                       lastName: lastNameCtrl.text,
                                       email: emailCtrl.text,
                                       username: usernameCtrl.text,
                                       bio: bioCtrl.text,
-                                      profilePicture: currentUser[0]
+                                      profilePicture: widget.user[0]
                                           ['profilePicture'],
-                                      password: currentUser[0]['password'],
+                                      password: widget.user[0]['password'],
                                     );
 
                                     try {
                                       await DatabaseHelper.editProfile(
                                           updatedUser);
-
-                                      await fetchUserData();
 
                                       Navigator.of(dialogContext).pop();
 
@@ -478,8 +454,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               'Profile updated successfully!'),
                                         ),
                                       );
+                                      print('Updated details: $updatedUser');
                                     } catch (e) {
-                                      // Handle any errors
                                       print('Error updating profile: $e');
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
@@ -528,11 +504,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Row(
               children: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: borrows,
                   child: Text('Borrows'),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: lends,
                   child: Text('Lends'),
                 ),
               ],
@@ -554,7 +530,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         context: context,
                         builder: (BuildContext ctx) {
                           var editShelfName = TextEditingController();
-                          editShelfName.text = shelfName;
+                          shelfName == 'Add a name for your shelf'
+                              ? editShelfName.text = ''
+                              : editShelfName.text = shelfName;
                           return AlertDialog(
                             title: Text('Edit Shelf name'),
                             content: TextField(
@@ -594,7 +572,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.all(8.0),
               child: FutureBuilder<List<Map<String, dynamic>>>(
                 future: DatabaseHelper.getBooksByOwnerId(
-                    currentUser.isNotEmpty ? currentUser[0]['id'] : -1),
+                    widget.user.isNotEmpty ? widget.user[0]['id'] : -1),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -891,10 +869,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text('Enter Image URL'),
+          title: const Text('Enter Cover Photo URL'),
           content: TextField(
             controller: urlController,
-            decoration: InputDecoration(labelText: 'Image URL'),
+            decoration: const InputDecoration(labelText: 'Image URL'),
           ),
           actions: [
             ElevatedButton(
@@ -905,16 +883,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     coverPhoto = enteredUrl;
                   });
                 }
-                print(coverPhoto);
                 Navigator.pop(dialogContext); // Close the dialog
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(dialogContext); // Close dialog without saving
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
           ],
         );
@@ -929,33 +906,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text('Enter Image URL'),
+          title: const Text('Enter Profile Picture URL'),
           content: TextField(
             controller: urlController,
-            decoration: InputDecoration(labelText: 'Image URL'),
+            decoration: const InputDecoration(labelText: 'Image URL'),
           ),
           actions: [
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 String enteredUrl = urlController.text.trim();
                 if (enteredUrl.isNotEmpty) {
-                  DatabaseHelper.updateProfilePicture(
-                      currentUser[0]['id'], enteredUrl);
-                  setState(() {
-                    currentUser[0]['profilePicture'] = enteredUrl;
-                  });
-                  print('Entered URL: $enteredUrl');
-                  // Update UI or database with the URL
+                  try {
+                    await DatabaseHelper.updateProfilePicture(
+                        widget.user[0]['id'], enteredUrl);
+
+                    print('Updated Profile Picture URL: $enteredUrl');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Update profile picture successsful'),
+                      ),
+                    );
+                    Navigator.pop(dialogContext);
+                  } catch (e) {
+                    print('Error updating profile picture: $e');
+                    Navigator.pop(dialogContext);
+                  }
                 }
-                Navigator.pop(dialogContext); // Close the dialog
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(dialogContext); // Close dialog without saving
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
           ],
         );
@@ -1028,4 +1012,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
   }
+
+  void borrows() {}
+
+  void lends() {}
 }
