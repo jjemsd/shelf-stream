@@ -5,8 +5,8 @@ class User {
   final String email;
   final String username;
   final String password;
-  String? bio; // Remove final to allow updates
-  String? profilePicture; // Remove final to allow updates
+  String? bio; 
+  String? profilePicture;
 
   User({
     this.id,

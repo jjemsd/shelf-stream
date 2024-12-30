@@ -14,7 +14,6 @@ class DatabaseHelper {
     var path = join(await getDatabasesPath(), dbName);
     print('Database path: $path');
 
-    // SQL to create users table
     var createUsersTableSql = '''
     CREATE TABLE IF NOT EXISTS $usersTable (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,7 +27,6 @@ class DatabaseHelper {
     );
     ''';
 
-    // SQL to create books table
     var createBooksTableSql = '''
     CREATE TABLE IF NOT EXISTS $booksTable (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,7 +44,6 @@ class DatabaseHelper {
       path,
       version: dbVersion,
       onCreate: (db, version) async {
-        // Create both tables
         await db.execute(createUsersTableSql);
         print('Users table created');
         await db.execute(createBooksTableSql);
@@ -55,7 +52,6 @@ class DatabaseHelper {
       onUpgrade: (db, oldVersion, newVersion) async {
         if (newVersion <= oldVersion) return;
 
-        // Drop and recreate both tables
         await db.execute('DROP TABLE IF EXISTS $usersTable');
         await db.execute('DROP TABLE IF EXISTS $booksTable');
         await db.execute(createUsersTableSql);
@@ -101,7 +97,13 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [user.id],
     );
-    print('record updated with ID: $id');
+    print('Rows updated: $id');
+    if (id == 0) {
+      print(
+          'No rows were updated. Possible reason: No user found with ID: ${user.id}');
+    } else {
+      print('record updated with ID: $id');
+    }
   }
 
   static Future<void> insertBook(BookDetails book) async {
@@ -123,8 +125,6 @@ class DatabaseHelper {
         .rawQuery('SELECT * FROM $booksTable WHERE ownerId = ?', [ownerId]);
   }
 
-  // Edit book including imageUrl
-  // Edit book
   static Future<void> editBook(BookDetails book) async {
     var db = await openDb();
     await db.update(
@@ -136,7 +136,6 @@ class DatabaseHelper {
     print('Book updated with ID: ${book.id}');
   }
 
-// Delete book
   static Future<void> deleteBook(int bookId) async {
     var db = await openDb();
     await db.delete(
@@ -169,5 +168,15 @@ class DatabaseHelper {
     } finally {
       await db.close();
     }
+  }
+
+  static Future<Map<String, dynamic>?> getUserById(int userId) async {
+    var db = await openDb();
+    var result = await db.query(
+      usersTable,
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
+    return result.isNotEmpty ? result.first : null;
   }
 }

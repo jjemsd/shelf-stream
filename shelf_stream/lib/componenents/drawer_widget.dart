@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:shelf_stream/database/database_helper.dart';
-import 'package:shelf_stream/screens/log_in_screen.dart';
+import 'package:shelf_stream/screens/logIn_screen.dart';
+import 'package:shelf_stream/screens/userProfile_screen.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({
     super.key,
-    required this.user, // Pass currentUser as a Map
+    required this.user,
   });
 
-  final List< Map<String, dynamic>> user; // Accept Map instead of List
+  final List<Map<String, dynamic>> user;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class DrawerWidget extends StatelessWidget {
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/logos/rectangle_green_bg.png'),
-                fit: BoxFit.cover, // Ensures the image covers the header area
+                fit: BoxFit.cover,
               ),
             ),
             child: Container(),
@@ -28,6 +29,11 @@ class DrawerWidget extends StatelessWidget {
             leading: Icon(Icons.person),
             title: Text('Profile'),
             onTap: () {
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (builder) => ProfileScreen(user: user),
+              //   ),
+              // );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('This feature is under construction'),
@@ -79,7 +85,6 @@ class DrawerWidget extends StatelessWidget {
                 ),
               ),
               onTap: () async {
-                // Show confirmation dialog before deletion
                 bool? shouldDelete = await showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -103,22 +108,18 @@ class DrawerWidget extends StatelessWidget {
                   ),
                 );
 
-                // If the user confirms, proceed with the deletion
                 if (shouldDelete == true) {
                   try {
                     var db = await DatabaseHelper.openDb();
 
-                    // Assuming currentUser contains an id field
                     int userId = user[0]['id'];
 
-                    // Delete the user from the database
                     await db.delete(
                       DatabaseHelper.usersTable,
                       where: 'id = ?',
                       whereArgs: [userId],
                     );
 
-                    // Show a confirmation SnackBar
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Your account has been deleted.'),
@@ -126,14 +127,12 @@ class DrawerWidget extends StatelessWidget {
                       ),
                     );
 
-                    // Navigate back to the login screen
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
                         builder: (builder) => LoginScreen(),
                       ),
-                      (route) =>
-                          false, // This ensures all previous routes are removed
+                      (route) => false,
                     );
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(

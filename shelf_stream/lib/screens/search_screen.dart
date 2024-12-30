@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shelf_stream/data/data.dart'; // Import the book data
+import 'package:shelf_stream/data/data.dart';
 import 'package:shelf_stream/models/search_result.dart';
-import 'package:shelf_stream/screens/book_details_screen_from_search.dart';
+import 'package:shelf_stream/screens/book_details_from_search_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -12,20 +12,21 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  List<SearchResult> searchResult = []; // List to store search results
+  // List<SearchResult> searches = [];
+  List<SearchResult> searchResult = [];
   TextEditingController searchController =
-      TextEditingController(); // Controller for the search bar
+      TextEditingController(); 
 
   @override
   void initState() {
     super.initState();
-    searchResult = []; // Initialize with an empty list
+    searchResult = []; 
   }
 
   void _searchBooks(String query) {
     if (query.isEmpty) {
       setState(() {
-        searchResult = []; // Clear results when query is empty
+        searchResult = []; 
       });
       return;
     }
@@ -39,17 +40,21 @@ class _SearchScreenState extends State<SearchScreen> {
               title: b.title,
               author: b.author,
               details:
-                  b.details ?? 'No details available', // Default value for null
-              ownerName: 'Unknown', // Modify as needed
+                  b.details ?? 'No details available', 
+              ownerName: 'Unknown', 
               imageUrl: b.imageUrl,
             ))
         .toList();
 
     setState(() {
       searchResult =
-          results; // Update the search result list with filtered data
+          results; 
     });
   }
+  // setState(() {
+  //     searchResult =
+  //         qurey; 
+  //   });
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +68,7 @@ class _SearchScreenState extends State<SearchScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: searchController,
-              onChanged: _searchBooks, // Trigger search on text change
+              onChanged: _searchBooks,
               decoration: InputDecoration(
                 hintText: 'Search by title or author...',
                 border: OutlineInputBorder(
@@ -80,7 +85,7 @@ class _SearchScreenState extends State<SearchScreen> {
               child: Text(
                 searchController.text.isEmpty
                     ? 'Start typing to search'
-                    : 'No results found', // Show message if no results
+                    : 'No results found', 
                 style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
             )
@@ -122,7 +127,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               )
                             : Image.network(
                                 searches.imageUrl ??
-                                    'https://example.com/default_image.png', // Provide a default image URL if null
+                                    'https://example.com/default_image.png',
                                 width: 50,
                                 height: 50,
                                 fit: BoxFit.cover,

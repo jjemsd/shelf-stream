@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shelf_stream/screens/categories_screen.dart';
+import 'package:shelf_stream/screens/viewCategory_screen.dart';
 import 'package:shelf_stream/data/data.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +13,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    const textColor = Color.fromARGB(255, 32, 58, 98);
+    const buttonColor = Color.fromARGB(255, 209, 238, 107);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -24,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 20,
+                color: textColor,
               ),
             ),
             SizedBox(
@@ -48,7 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text(currentBook.title),
+                              title: Text(
+                                currentBook.title,
+                                style: TextStyle(color: textColor),
+                              ),
                               content: SingleChildScrollView(
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -64,43 +70,54 @@ class _HomeScreenState extends State<HomeScreen> {
                                     const SizedBox(height: 16),
                                     Text(
                                       'Author: ${currentBook.author}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
+                                        color: textColor,
                                       ),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
                                       'Book owner: ${currentBook.ownerName}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
+                                        color: textColor,
                                       ),
                                     ),
                                     const SizedBox(height: 8),
-                                    Text(currentBook.details!),
+                                    Text(
+                                      currentBook.details!,
+                                      style: TextStyle(color: textColor),
+                                    ),
                                   ],
                                 ),
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop(); // Close dialog
+                                    Navigator.of(context).pop();
                                   },
-                                  child: const Text('Cancel'),
+                                  child: Text('Cancel',
+                                      style: TextStyle(color: textColor)),
                                 ),
                                 ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: buttonColor,
+                                  ),
                                   onPressed: () {
-                                    // Borrow logic here
                                     print('Borrowing ${currentBook.title}');
-                                    Navigator.of(context).pop(); // Close dialog
+                                    Navigator.of(context).pop();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
                                           'You have requested to borrow ${currentBook.title}',
+                                          style: TextStyle(color: textColor),
                                         ),
+                                        backgroundColor: buttonColor,
                                       ),
                                     );
                                   },
-                                  child: const Text('Borrow'),
+                                  child: Text('Borrow',
+                                      style: TextStyle(color: textColor)),
                                 ),
                               ],
                             );
@@ -111,18 +128,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         footer: GridTileBar(
                           title: Text(
                             currentBook.title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
+                              color: Colors.white,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            softWrap: true,
                           ),
                           backgroundColor: Colors.black87,
                         ),
                         child: currentBook.imageUrl == null
                             ? Container(
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   image: DecorationImage(
                                     image: NetworkImage(
                                       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png',
@@ -151,6 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 20,
+                color: textColor,
               ),
             ),
             Expanded(
@@ -168,19 +186,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.of(context).push(
                           CupertinoPageRoute(
                             builder: (builder) => BookListScreen(
-                              category: category.categoryName,
+                              category: category
+                                  .categoryName, // Pass selected category here
                             ),
                           ),
                         );
                       },
                       child: GridTile(
                         footer: GridTileBar(
-                          title: Text(category.categoryName),
+                          title: Text(
+                            category.categoryName,
+                            style: TextStyle(color: Colors.white),
+                          ),
                           backgroundColor: Colors.black87,
                         ),
                         child: category.imageUrl == null
                             ? Container(
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   image: DecorationImage(
                                     image: NetworkImage(
                                       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png',
@@ -204,7 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-            // SizedBox(height: 20),
           ],
         ),
       ),

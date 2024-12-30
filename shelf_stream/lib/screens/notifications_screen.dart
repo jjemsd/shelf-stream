@@ -26,56 +26,85 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       notifType: 'info',
       notifTitle: 'Attention',
       notifDetails: 'This needs your attention',
-    )
+    ),
   ];
+
   @override
   Widget build(BuildContext context) {
+    const primaryColor = Color.fromARGB(255, 209, 238, 107);
+    const textColor = Color.fromARGB(255, 32, 58, 98);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Notifications',
           style: TextStyle(
             fontFamily: 'Monolog',
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
           ),
         ),
+        backgroundColor: primaryColor,
       ),
       body: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: notifications.length,
         itemBuilder: (BuildContext context, int index) {
           var notificationType = notifications[index];
           return Card(
-            color: Colors.white54,
-            margin: EdgeInsets.only(top: 0),
-            elevation: 0,
-            shape: Border(
-              bottom: BorderSide(color: Colors.grey.shade200),
+            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(12.0),
               child: ListTile(
+                contentPadding: EdgeInsets.zero,
                 leading: CircleAvatar(
-                  radius: 30,
+                  radius: 28,
                   backgroundColor: Colors.black12,
                   child: notificationType.notifType == 'reminder'
-                      ? FaIcon(FontAwesomeIcons.exclamation,
-                          color: Colors.red, size: 20.0)
+                      ? FaIcon(
+                          FontAwesomeIcons.exclamation,
+                          color: Colors.red,
+                          size: 22.0,
+                        )
                       : notificationType.notifType == 'request'
-                          ? FaIcon(FontAwesomeIcons.info,
-                              color: Colors.blue, size: 20.0)
-                          : FaIcon(FontAwesomeIcons.question,
-                              color: Colors.grey, size: 20.0), // Default icon
+                          ? FaIcon(
+                              FontAwesomeIcons.info,
+                              color: Colors.blue,
+                              size: 22.0,
+                            )
+                          : FaIcon(
+                              FontAwesomeIcons.question,
+                              color: Colors.grey,
+                              size: 22.0,
+                            ), 
                 ),
                 title: Text(
                   notificationType.notifTitle,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: textColor,
                   ),
                 ),
-                subtitle: Text(notificationType.notifDetails),
-                trailing: FaIcon(
+                subtitle: Text(
+                  notificationType.notifDetails,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: textColor,
+                  ),
+                ),
+                trailing: const FaIcon(
                   FontAwesomeIcons.chevronRight,
                   size: 20,
+                  color: textColor,
                 ),
+                onTap: () {
+                  
+                },
               ),
             ),
           );

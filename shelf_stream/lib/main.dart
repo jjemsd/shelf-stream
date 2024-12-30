@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shelf_stream/screens/log_in_screen.dart';
-import 'package:shelf_stream/screens/shelf_stream_home.dart';
+import 'package:shelf_stream/screens/logIn_screen.dart';
+import 'package:shelf_stream/screens/ui_foundation.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
